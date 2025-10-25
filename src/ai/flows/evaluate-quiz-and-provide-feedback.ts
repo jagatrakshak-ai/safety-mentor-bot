@@ -19,8 +19,8 @@ const EvaluateQuizAndProvideFeedbackInputSchema = z.object({
 export type EvaluateQuizAndProvideFeedbackInput = z.infer<typeof EvaluateQuizAndProvideFeedbackInputSchema>;
 
 const EvaluateQuizAndProvideFeedbackOutputSchema = z.object({
-  score: z.number().describe('The overall score of the quiz.'),
-  feedback: z.array(z.string()).describe('An array of feedback for each question.'),
+  score: z.number().describe('The overall score of the quiz as a percentage (0-100).'),
+  feedback: z.array(z.string()).describe('An array of feedback for each question. The length of this array must match the number of questions.'),
 });
 export type EvaluateQuizAndProvideFeedbackOutput = z.infer<typeof EvaluateQuizAndProvideFeedbackOutputSchema>;
 
@@ -36,8 +36,9 @@ const prompt = ai.definePrompt({
   output: {schema: EvaluateQuizAndProvideFeedbackOutputSchema},
   prompt: `You are an AI safety expert evaluating a safety quiz.
 
-  You will provide a score based on the answers provided, as well as feedback for each question.
-  Take into account the user's job role and job description when evaluating the answers.
+  You will evaluate the user's answers and provide a final score as a percentage from 0 to 100.
+  You must also provide specific, constructive feedback for each individual answer. The feedback should explain why the answer is correct or incorrect.
+  Take into account the user's job role and job description when evaluating the answers for context.
 
   Job Role: {{{jobRole}}}
   Job Description: {{{jobDescription}}}
