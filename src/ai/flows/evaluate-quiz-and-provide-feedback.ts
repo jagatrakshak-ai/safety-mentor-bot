@@ -49,19 +49,20 @@ const prompt = ai.definePrompt({
   input: {schema: EvaluateQuizAndProvideFeedbackInputSchema},
   output: {schema: EvaluateQuizAndProvideFeedbackOutputSchema},
   prompt: `You are an AI safety expert evaluating a safety quiz.
-
-  You will evaluate the user's answers and provide a final score as a percentage from 0 to 100.
-  You must also provide specific, constructive feedback for each individual answer. The feedback should explain why the answer is correct or incorrect.
+  Your task is to evaluate the user's answers and provide a final score as a percentage (0-100).
+  You must also provide specific, constructive feedback for each answer, explaining why it is correct or incorrect.
   If a user's answer is an empty string, you must state 'No answer was provided.' in the feedback for that question.
-  Take into account the user's job role and job description when evaluating the answers for context.
+  Your evaluation should be contextualized by the user's job role and description.
 
   Job Role: {{{jobRole}}}
   Job Description: {{{jobDescription}}}
 
-  Quiz Questions and User Answers:
+  You will be provided a list of questions and a corresponding list of user answers.
+
+  Here are the questions and answers to evaluate:
   {{#each quizQuestions}}
-    Question {{@index}}: {{this}}
-    Answer: {{../userAnswers.[@index]}}
+  Question {{@index}}: {{this}}
+  User's Answer for Question {{@index}}: {{lookup ../userAnswers @index}}
   {{/each}}
   `,
 });
