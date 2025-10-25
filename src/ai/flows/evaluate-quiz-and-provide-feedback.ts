@@ -12,17 +12,31 @@ import {z} from 'genkit';
 
 const EvaluateQuizAndProvideFeedbackInputSchema = z.object({
   quizQuestions: z.array(z.string()).describe('An array of quiz questions.'),
-  userAnswers: z.array(z.string()).describe('An array of user answers to the quiz questions.'),
+  userAnswers: z
+    .array(z.string())
+    .describe('An array of user answers to the quiz questions.'),
   jobRole: z.string().describe('The job role of the user taking the quiz.'),
-  jobDescription: z.string().describe('The job description of the user taking the quiz.'),
+  jobDescription: z
+    .string()
+    .describe('The job description of the user taking the quiz.'),
 });
-export type EvaluateQuizAndProvideFeedbackInput = z.infer<typeof EvaluateQuizAndProvideFeedbackInputSchema>;
+export type EvaluateQuizAndProvideFeedbackInput = z.infer<
+  typeof EvaluateQuizAndProvideFeedbackInputSchema
+>;
 
 const EvaluateQuizAndProvideFeedbackOutputSchema = z.object({
-  score: z.number().describe('The overall score of the quiz as a percentage (0-100).'),
-  feedback: z.array(z.string()).describe('An array of feedback for each question. The length of this array must match the number of questions.'),
+  score: z
+    .number()
+    .describe('The overall score of the quiz as a percentage (0-100).'),
+  feedback: z
+    .array(z.string())
+    .describe(
+      'An array of feedback for each question. The length of this array must match the number of questions.'
+    ),
 });
-export type EvaluateQuizAndProvideFeedbackOutput = z.infer<typeof EvaluateQuizAndProvideFeedbackOutputSchema>;
+export type EvaluateQuizAndProvideFeedbackOutput = z.infer<
+  typeof EvaluateQuizAndProvideFeedbackOutputSchema
+>;
 
 export async function evaluateQuizAndProvideFeedback(
   input: EvaluateQuizAndProvideFeedbackInput
@@ -38,6 +52,7 @@ const prompt = ai.definePrompt({
 
   You will evaluate the user's answers and provide a final score as a percentage from 0 to 100.
   You must also provide specific, constructive feedback for each individual answer. The feedback should explain why the answer is correct or incorrect.
+  If a user's answer is an empty string, you must state 'No answer was provided.' in the feedback for that question.
   Take into account the user's job role and job description when evaluating the answers for context.
 
   Job Role: {{{jobRole}}}
