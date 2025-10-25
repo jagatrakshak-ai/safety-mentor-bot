@@ -105,7 +105,7 @@ export default function QuizPage() {
             jobDescription: profile.jobDescription
         });
         
-        localStorage.setItem('safety-mentor-quiz-results', JSON.stringify({ ...result, userAnswers: answers, questions: quizQuestions }));
+        localStorage.setItem('safety-mentor-quiz-results', JSON.stringify({ ...result, userAnswers: answers, questions: quiz.map(q => q.question + '\n' + q.options?.map(o => o).join('\n') ) }));
         router.push('/report');
 
       } catch (error) {

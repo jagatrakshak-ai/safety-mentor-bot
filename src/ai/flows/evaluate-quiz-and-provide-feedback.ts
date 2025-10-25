@@ -3,7 +3,7 @@
  * @fileOverview Evaluates the quiz responses and provides a score with short, specific feedback.
  *
  * - evaluateQuizAndProvideFeedback - A function that handles the quiz evaluation and feedback process.
- * - EvaluateQuizAndProvideFeedbackInput - The input type for the evaluateQuizAndProvideFeedback function.
+ * - EvaluateQuizAndProvideFeedbackInput - The input type for the evaluateQuizAndprovideFeedback function.
  * - EvaluateQuizAndProvideFeedbackOutput - The return type for the evaluateQuizAndProvideFeedback function.
  */
 
@@ -48,23 +48,21 @@ const prompt = ai.definePrompt({
   name: 'evaluateQuizAndProvideFeedbackPrompt',
   input: {schema: EvaluateQuizAndProvideFeedbackInputSchema},
   output: {schema: EvaluateQuizAndProvideFeedbackOutputSchema},
-  prompt: `You are an AI safety expert evaluating a safety quiz.
-  Your task is to evaluate the user's answers and provide a final score as a percentage (0-100).
-  You must also provide specific, constructive feedback for each answer, explaining why it is correct or incorrect.
-  If a user's answer is an empty string, you must state 'No answer was provided.' in the feedback for that question.
-  Your evaluation should be contextualized by the user's job role and description.
+  prompt: `You are an AI safety expert evaluating a safety quiz. Your task is to evaluate the user's answers and provide a final score as a percentage (0-100). You must also provide specific, constructive feedback for each answer, explaining why it is correct or incorrect.
 
-  Job Role: {{{jobRole}}}
-  Job Description: {{{jobDescription}}}
+Your evaluation should be contextualized by the user's job role and description.
 
-  You will be provided a list of questions and a corresponding list of user answers.
+Job Role: {{{jobRole}}}
+Job Description: {{{jobDescription}}}
 
-  Here are the questions and answers to evaluate:
-  {{#each quizQuestions}}
-  Question {{@index}}: {{this}}
-  User's Answer for Question {{@index}}: {{lookup ../userAnswers @index}}
-  {{/each}}
-  `,
+You will be provided a list of questions and a corresponding list of user answers. For each question, evaluate the provided user answer. If a user's answer is an empty string, you must state 'No answer was provided.' in the feedback for that question.
+
+Here are the questions and answers to evaluate:
+{{#each quizQuestions}}
+Question {{@index}}: {{this}}
+User's Answer for Question {{@index}}: {{lookup ../userAnswers @index}}
+{{/each}}
+`,
 });
 
 const evaluateQuizAndProvideFeedbackFlow = ai.defineFlow(

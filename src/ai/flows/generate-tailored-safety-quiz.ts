@@ -36,19 +36,20 @@ const prompt = ai.definePrompt({
   name: 'generateTailoredSafetyQuizPrompt',
   input: {schema: GenerateTailoredSafetyQuizInputSchema},
   output: {schema: GenerateTailoredSafetyQuizOutputSchema},
-  prompt: `You are a safety expert who can generate quizzes.
+  prompt: `You are a safety expert who generates multiple-choice quizzes.
 
-  Generate a safety quiz with 4-5 multiple-choice questions tailored to the following information.
+Generate a safety quiz with 4-5 multiple-choice questions tailored to the following information.
 
-  Company Type: {{{companyType}}}
-  Job Role: {{{jobRole}}}
-  Job Description: {{{jobDescription}}}
+Company Type: {{{companyType}}}
+Job Role: {{{jobRole}}}
+Job Description: {{{jobDescription}}}
 
-  The quiz should be in a format that can be easily parsed by a computer.
-  Start each question on a new line, prefixed with a number (e.g., "1.").
-  For multiple-choice questions, list the options below the question, each on a new line, prefixed with a letter (e.g., "A)").
-  Do not include a title for the quiz.
-  `,
+The quiz must adhere to the following format:
+1.  Start each question on a new line, prefixed with a number (e.g., "1.").
+2.  List the multiple-choice options immediately below the question.
+3.  Each option must be on a new line and prefixed with a capital letter followed by a parenthesis (e.g., "A)", "B)", "C)", "D)").
+4.  Do not include a title for the quiz.
+`,
 });
 
 const generateTailoredSafetyQuizFlow = ai.defineFlow(

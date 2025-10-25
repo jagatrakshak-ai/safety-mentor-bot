@@ -163,7 +163,7 @@ export default function ReportPage() {
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 print:hidden">
             <TabsTrigger value="report"><FileText className="mr-2 h-4 w-4" />Compliance Report</TabsTrigger>
             <TabsTrigger value="courses"><BookOpen className="mr-2 h-4 w-4" />Recommended Courses</TabsTrigger>
-            <TabsTrigger value="review" className="hidden md:flex">Quiz Review</TabsTrigger>
+            <TabsTrigger value="review">Quiz Review</TabsTrigger>
           </TabsList>
           
           <TabsContent value="report" className="mt-4">
@@ -234,7 +234,7 @@ export default function ReportPage() {
               <CardContent className="space-y-4">
                 {quizResult.questions.map((q, i) => (
                   <div key={i} className="rounded-lg border p-4">
-                    <p className="font-semibold">{i+1}. {q}</p>
+                    <p className="font-semibold whitespace-pre-wrap">{i+1}. {q}</p>
                     <p className="text-sm text-muted-foreground mt-2">Your answer: <span className="font-medium text-foreground">{quizResult.userAnswers[i]}</span></p>
                     <Separator className="my-2" />
                     <p className="text-sm text-primary">Feedback: <span className="text-foreground">{quizResult.feedback[i]}</span></p>
