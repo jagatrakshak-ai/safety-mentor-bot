@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, BookOpen, CheckCircle, Download, FileText, Loader2, RefreshCw, XCircle } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 import type { ProfileData, QuizResult, ComplianceReport, CourseRecommendations } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -19,12 +21,14 @@ import { Logo } from '@/components/logo';
 export default function ReportPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [report, setReport] = useState<ComplianceReport | null>(null);
   const [courses, setCourses] = useState<CourseRecommendations | null>(null);
   const [isLoading, startLoading] = useTransition();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     const storedProfile = localStorage.getItem('safety-mentor-profile');
@@ -75,11 +79,37 @@ export default function ReportPage() {
     router.push('/');
   };
 
-  const handleDownload = () => {
-    toast({
-      title: "Feature not available",
-      description: "PDF downloads are coming soon!",
-    })
+  const handleDownload = async () => {
+    if (!reportRef.current) return;
+    setIsDownloading(true);
+
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('safety-report.pdf');
+
+    } catch (error) {
+       console.error('Failed to download PDF:', error);
+       toast({
+          variant: 'destructive',
+          title: 'Download Failed',
+          description: 'Could not generate PDF. Please try again.',
+        });
+    } finally {
+      setIsDownloading(false);
+    }
   }
 
   if (!quizResult) {
@@ -99,8 +129,12 @@ export default function ReportPage() {
       <header className="mx-auto max-w-4xl flex justify-between items-center mb-6">
         <Logo />
         <div className="flex gap-2">
-            <Button variant="outline" onClick={handleDownload}>
-              <Download className="mr-2 h-4 w-4" />
+            <Button variant="outline" onClick={handleDownload} disabled={isDownloading}>
+              {isDownloading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
               Download PDF
             </Button>
             <Button onClick={handleStartOver}>
@@ -110,8 +144,8 @@ export default function ReportPage() {
         </div>
       </header>
       
-      <main className="mx-auto max-w-4xl">
-        <Card className="mb-6">
+      <main ref={reportRef} className="mx-auto max-w-4xl bg-background p-4 sm:p-6 lg:p-8 rounded-lg shadow-sm">
+        <Card className="mb-6 border-0 shadow-none">
             <CardHeader className="text-center">
                 <CardTitle className="text-3xl">Your Safety Assessment Results</CardTitle>
                 <CardDescription>An overview of your performance and tailored recommendations.</CardDescription>
@@ -126,7 +160,7 @@ export default function ReportPage() {
         </Card>
 
         <Tabs defaultValue="report" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 print:hidden">
             <TabsTrigger value="report"><FileText className="mr-2 h-4 w-4" />Compliance Report</TabsTrigger>
             <TabsTrigger value="courses"><BookOpen className="mr-2 h-4 w-4" />Recommended Courses</TabsTrigger>
             <TabsTrigger value="review" className="hidden md:flex">Quiz Review</TabsTrigger>
