@@ -69,6 +69,11 @@ export default function ProfilePage() {
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      companyType: '',
+      jobRole: '',
+      jobDescription: '',
+    },
     mode: 'onChange',
   });
 
