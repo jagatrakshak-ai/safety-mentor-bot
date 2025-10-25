@@ -4,23 +4,32 @@ import type { QuizQuestion } from '@/lib/types';
 export function parseQuiz(quizText: string): QuizQuestion[] {
   const questions: QuizQuestion[] = [];
   
-  // Normalize line endings and remove any leading/trailing whitespace
   const normalizedText = quizText.replace(/\r\n/g, '\n').trim();
 
-  // Split questions by a number followed by a period and a space.
-  // This is a more reliable way to split the questions.
-  const questionBlocks = normalizedText.split(/\n?(?=\d\.\s)/).filter(block => block.trim().length > 0);
+  const questionBlocks = normalizedText.split(/\n?(?=\d+\.\s)/).filter(block => block.trim().length > 0);
 
   for (const block of questionBlocks) {
     const lines = block.trim().split('\n');
     
-    // The first line is the question.
-    const questionLine = lines[0].replace(/^\d\.\s/, '').trim();
-    if (questionLine.length < 5) continue;
+    const questionParts: string[] = [];
+    const optionLines: string[] = [];
 
-    // Filter for lines that look like multiple-choice options (e.g., "A) ...")
-    const options = lines
-      .slice(1)
+    let isParsingQuestion = true;
+    for(const line of lines) {
+        if (/^[A-D]\)/.test(line.trim())) {
+            isParsingQuestion = false;
+        }
+        if(isParsingQuestion) {
+            questionParts.push(line.replace(/^\d+\.\s/, '').trim());
+        } else {
+            optionLines.push(line.trim());
+        }
+    }
+    
+    const questionLine = questionParts.join(' ').trim();
+    if (questionLine.length < 5) continue;
+    
+    const options = optionLines
       .map(line => line.trim())
       .filter(line => /^[A-D]\)/.test(line));
 
