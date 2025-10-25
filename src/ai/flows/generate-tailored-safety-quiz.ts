@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateTailoredSafetyQuizOutputSchema},
   prompt: `You are a safety expert who can generate quizzes.
 
-  Generate a safety quiz with 4-5 questions tailored to the following information. Some questions should be multiple choice, and some should be open-ended text questions.
+  Generate a safety quiz with 4-5 multiple-choice questions tailored to the following information.
 
   Company Type: {{{companyType}}}
   Job Role: {{{jobRole}}}
