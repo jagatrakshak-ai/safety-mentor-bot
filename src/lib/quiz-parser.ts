@@ -1,36 +1,33 @@
+
 import type { QuizQuestion } from '@/lib/types';
 
 export function parseQuiz(quizText: string): QuizQuestion[] {
   const questions: QuizQuestion[] = [];
   
-  // Normalize line endings
-  const normalizedText = quizText.replace(/\r\n/g, '\n');
+  // Normalize line endings and remove any leading/trailing whitespace
+  const normalizedText = quizText.replace(/\r\n/g, '\n').trim();
 
-  // Split by common question markers like "Q1:", "1.", etc.
-  const questionBlocks = normalizedText.split(/(?=\n\d+\.|\nQ\d+:|\nQuestion \d+:)/).map(b => b.trim()).filter(Boolean);
-
-  // If the first split doesn't work, try another strategy
-  if (questionBlocks.length <= 1) {
-    const fallbackBlocks = normalizedText.split('\n\n').map(b => b.trim()).filter(Boolean);
-    questionBlocks.splice(0, questionBlocks.length, ...fallbackBlocks);
-  }
+  // Split questions by a number followed by a period and a space.
+  // This is a more reliable way to split the questions.
+  const questionBlocks = normalizedText.split(/\n?(?=\d\.\s)/).filter(block => block.trim().length > 0);
 
   for (const block of questionBlocks) {
     const lines = block.trim().split('\n');
-    const questionLine = lines[0].replace(/^(\d+\.|Q\d+:|Question \d+:)\s*/, '').trim();
     
-    // Ignore blocks that are too short to be a question
+    // The first line is the question.
+    const questionLine = lines[0].replace(/^\d\.\s/, '').trim();
     if (questionLine.length < 5) continue;
 
+    // Filter for lines that look like multiple-choice options (e.g., "A) ...")
     const options = lines
       .slice(1)
       .map(line => line.trim())
-      .filter(line => /^\s*[A-Da-d][\)\.]\s/.test(line));
+      .filter(line => /^[A-D]\)/.test(line));
 
-    if (options.length > 1) { // Require at least 2 options for multiple choice
+    if (options.length > 1) {
       questions.push({
         question: questionLine,
-        options: options.map(opt => opt.replace(/^\s*[A-Da-d][\)\.]\s*/, '')),
+        options: options.map(opt => opt.replace(/^[A-D]\)\s*/, '')),
         type: 'multiple-choice',
       });
     } else {
