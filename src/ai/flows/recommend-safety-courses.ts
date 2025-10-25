@@ -17,8 +17,13 @@ const RecommendSafetyCoursesInputSchema = z.object({
 });
 export type RecommendSafetyCoursesInput = z.infer<typeof RecommendSafetyCoursesInputSchema>;
 
+const CourseSchema = z.object({
+  name: z.string().describe('The name of the recommended safety course.'),
+  url: z.string().url().describe('A relevant URL for the course from a documentation site or YouTube.'),
+});
+
 const RecommendSafetyCoursesOutputSchema = z.object({
-  courses: z.array(z.string()).describe('A list of recommended safety courses.'),
+  courses: z.array(CourseSchema).describe('A list of recommended safety courses with names and URLs.'),
 });
 export type RecommendSafetyCoursesOutput = z.infer<typeof RecommendSafetyCoursesOutputSchema>;
 
@@ -32,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'recommendSafetyCoursesPrompt',
   input: {schema: RecommendSafetyCoursesInputSchema},
   output: {schema: RecommendSafetyCoursesOutputSchema},
-  prompt: `You are an AI safety training assistant. Based on the job role and quiz results, recommend relevant safety courses.
+  prompt: `You are an AI safety training assistant. Based on the job role and quiz results, recommend relevant safety courses. For each course, provide a name and a relevant URL (e.g., from a documentation site, reputable training provider, or YouTube).
 
 Job Role: {{{jobRole}}}
 Quiz Results: {{{quizResults}}}

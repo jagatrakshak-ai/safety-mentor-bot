@@ -24,6 +24,11 @@ export type ComplianceReport = {
   recommendations: string;
 };
 
+export type Course = {
+  name: string;
+  url: string;
+};
+
 export type CourseRecommendations = {
-  courses: string[];
+  courses: Course[];
 };

@@ -212,9 +212,11 @@ export default function ReportPage() {
                 ) : courses && courses.courses.length > 0 ? (
                   <ul className="space-y-3">
                     {courses.courses.map((course, index) => (
-                      <li key={index} className="flex items-start gap-3 rounded-md border p-3">
+                      <li key={index} className="flex items-start gap-3 rounded-md border p-3 transition-all hover:bg-accent/50">
                         <BookOpen className="h-5 w-5 flex-shrink-0 text-primary mt-1" />
-                        <span className="flex-1">{course}</span>
+                        <a href={course.url} target="_blank" rel="noopener noreferrer" className="flex-1 text-primary underline-offset-4 hover:underline">
+                          {course.name}
+                        </a>
                       </li>
                     ))}
                   </ul>
