@@ -26,9 +26,9 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Logo } from '@/components/logo';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User, Sparkles, ClipboardList, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import placeHolderImages from '@/lib/placeholder-images.json';
 
@@ -61,6 +61,29 @@ const companyTypes = [
   'Hospitality',
   'Other',
 ];
+
+const howItWorksSteps = [
+    {
+        icon: User,
+        title: "1. Create Your Profile",
+        description: "Tell us your industry and job role so we can tailor the assessment.",
+    },
+    {
+        icon: Sparkles,
+        title: "2. AI Generates a Quiz",
+        description: "Our AI creates a unique, multiple-choice quiz based on your profile.",
+    },
+    {
+        icon: ClipboardList,
+        title: "3. Take the Quiz",
+        description: "Answer the questions to test your workplace safety knowledge.",
+    },
+    {
+        icon: FileText,
+        title: "4. Get Your Report",
+        description: "Receive an AI-generated compliance report and course recommendations.",
+    }
+]
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -99,7 +122,7 @@ export default function ProfilePage() {
   return (
     <div className="relative min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="flex items-center justify-center p-6 sm:p-8 lg:p-12">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
+        <div className="mx-auto flex w-full max-w-xl flex-col justify-center space-y-8">
           <div className="flex flex-col space-y-2 text-center">
             <Logo className="mx-auto" />
             <h1 className="text-2xl font-semibold tracking-tight">
@@ -186,6 +209,33 @@ export default function ProfilePage() {
               </Form>
             </CardContent>
           </Card>
+          
+          <div className="space-y-6 pt-4">
+             <div className="flex flex-col space-y-2 text-center">
+                <h2 className="text-2xl font-semibold tracking-tight">
+                    How It Works
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                    A simple, four-step process to enhance your safety knowledge.
+                </p>
+             </div>
+             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {howItWorksSteps.map((step, index) => (
+                    <Card key={step.title} className="bg-muted/30 animate-in fade-in-0 slide-in-from-bottom-5 duration-500" style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'backwards' }}>
+                        <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                            <div className="bg-primary/10 p-2 rounded-lg">
+                                <step.icon className="h-6 w-6 text-primary" />
+                            </div>
+                            <CardTitle className="text-base font-semibold">{step.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground">{step.description}</p>
+                        </CardContent>
+                    </Card>
+                ))}
+             </div>
+          </div>
+
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
